@@ -1,21 +1,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.routes import upload
 
-app = FastAPI()
+app = FastAPI(title="Data Analyzer Backend")
 
-# Allow React frontend
+# Allow requests from frontend
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],
-    allow_credentials=True,
+    allow_origins=["*"],  # in production, restrict to frontend URL
     allow_methods=["*"],
-    allow_headers=["*"],
+    allow_headers=["*"]
 )
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello from FastAPI 🚀"}
+# Include routes
+app.include_router(upload.router)
 
-@app.get("/ping")
-def ping():
-    return {"status": "alive"}
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)

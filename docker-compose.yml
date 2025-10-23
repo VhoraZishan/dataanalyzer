@@ -1,6 +1,7 @@
 services:
   backend:
     build: ./backend
+    container_name: dataanalyzer-backend
     ports:
       - "8000:8000"
     environment:
@@ -8,5 +9,8 @@ services:
 
   frontend:
     build: ./frontend
+    container_name: dataanalyzer-frontend
     ports:
       - "3000:80"
+    depends_on:
+      - backend
