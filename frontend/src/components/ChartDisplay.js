@@ -1,46 +1,32 @@
-// frontend/src/components/ChartDisplay.js
 import React from "react";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-} from "chart.js";
+import { Bar, Line, Pie } from "react-chartjs-2";
+import { Chart as ChartJS } from "chart.js/auto";
 
-// Register Chart.js components
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+const ChartDisplay = ({ data, chartType }) => {
+  if (!Array.isArray(data) || data.length === 0) return <p>No data to display</p>;
 
-const ChartDisplay = ({ data }) => {
-  if (!data) return <p>Upload a CSV to see the chart</p>;
+  const firstKey = Object.keys(data[0])[0];
+  const secondKey = Object.keys(data[0])[1];
+
+  const labels = data.map((row) => row[firstKey]);
+  const values = data.map((row) => Number(row[secondKey]));
 
   const chartData = {
-    labels: data.labels, // from backend
+    labels,
     datasets: [
       {
-        label: "Uploaded Data",
-        data: data.values, // from backend
-        backgroundColor: "rgba(75, 192, 192, 0.5)",
+        label: secondKey,
+        data: values,
+        backgroundColor: "rgba(54, 162, 235, 0.6)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
       },
     ],
   };
 
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: { position: "top" },
-      title: { display: true, text: "CSV Chart" },
-    },
-    scales: {
-      x: { type: "category" }, // CategoryScale is now registered
-      y: { beginAtZero: true },
-    },
-  };
-
-  return <Bar data={chartData} options={chartOptions} />;
+  if (chartType === "line") return <Line data={chartData} />;
+  if (chartType === "pie") return <Pie data={chartData} />;
+  return <Bar data={chartData} />;
 };
 
 export default ChartDisplay;
